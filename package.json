@@ -1,0 +1,19 @@
+{
+    "name": "@tzie/tokens",
+    "version": "0.0.0-alpha.0",
+    "description": "",
+    "keywords": [
+        "tzie"
+    ],
+    "license": "ISC",
+    "author": "Hiroki Nakatani",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "build": "style-dictionary build --config sd.config.mjs"
+    },
+    "devDependencies": {
+        "@tokens-studio/sd-transforms": "^2.0.2",
+        "style-dictionary": "^5.1.1"
+    }
+}
