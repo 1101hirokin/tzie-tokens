@@ -13,6 +13,7 @@ export default {
     platforms: {
         // 1) JSON出力
         json: {
+            prefix: "tz",
             transformGroup: "tokens-studio",
             buildPath: "dist/json/",
             files: [
@@ -68,6 +69,7 @@ export default {
 
         // 5) Compose（Kotlinコード）出力
         compose: {
+            prefix: "tz",
             // Compose向けTransform Group（color/composeColor 等）:contentReference[oaicite:4]{index=4}
             transformGroup: "compose",
             buildPath: "dist/compose/",
@@ -85,6 +87,7 @@ export default {
 
         // 6) iOS Swift 出力
         iosSwift: {
+            prefix: "tz",
             // Swift向けTransform Group（name=camel, color/UIColorSwift 等）:contentReference[oaicite:7]{index=7}
             transformGroup: "ios-swift",
             buildPath: "dist/ios/",
