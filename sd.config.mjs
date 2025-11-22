@@ -11,7 +11,25 @@ export default {
     preprocessors: ["tokens-studio"],
 
     platforms: {
-        // 1) JS + d.ts 出力
+        // 1) JSON出力
+        json: {
+            transformGroup: "tokens-studio",
+            buildPath: "dist/json/",
+            files: [
+                {
+                    destination: "tokens.nested.json",
+                    format: "json/nested",
+                    options: { outputReferences: true },
+                },
+                {
+                    destination: "tokens.flat.json",
+                    format: "json/flat",
+                    options: { outputReferences: true },
+                },
+            ],
+        },
+
+        // 2) JS + d.ts 出力
         js: {
             prefix: "tz",
             transformGroup: "tokens-studio",
@@ -30,7 +48,7 @@ export default {
             options: { outputReferences: true }, // 参照維持
         },
 
-        // 2) CSS Variables 出力
+        // 3) CSS Variables 出力
         css: {
             prefix: "tz",
             transformGroup: "tokens-studio",
@@ -48,7 +66,7 @@ export default {
             ],
         },
 
-        // 3) Compose（Kotlinコード）出力
+        // 5) Compose（Kotlinコード）出力
         compose: {
             // Compose向けTransform Group（color/composeColor 等）:contentReference[oaicite:4]{index=4}
             transformGroup: "compose",
@@ -65,7 +83,7 @@ export default {
             ],
         },
 
-        // 4) iOS Swift 出力
+        // 6) iOS Swift 出力
         iosSwift: {
             // Swift向けTransform Group（name=camel, color/UIColorSwift 等）:contentReference[oaicite:7]{index=7}
             transformGroup: "ios-swift",
