@@ -47,5 +47,38 @@ export default {
                 },
             ],
         },
+
+        // 3) Compose（Kotlinコード）出力
+        compose: {
+            // Compose向けTransform Group（color/composeColor 等）:contentReference[oaicite:4]{index=4}
+            transformGroup: "compose",
+            buildPath: "dist/compose/",
+            files: [
+                {
+                    destination: "Tokens.kt",
+                    format: "compose/object", // Kotlin object に val を並べるビルトイン:contentReference[oaicite:5]{index=5}
+                    options: {
+                        packageName: "com.tzie.tokens", // 任意（ドキュメント化されているオプション）:contentReference[oaicite:6]{index=6}
+                        className: "DesignTokens",
+                    },
+                },
+            ],
+        },
+
+        // 4) iOS Swift 出力
+        iosSwift: {
+            // Swift向けTransform Group（name=camel, color/UIColorSwift 等）:contentReference[oaicite:7]{index=7}
+            transformGroup: "ios-swift",
+            buildPath: "dist/ios/",
+            files: [
+                {
+                    destination: "DesignTokens.swift",
+                    // Swiftの enum で値を並べるビルトインフォーマット :contentReference[oaicite:8]{index=8}
+                    format: "ios-swift/enum.swift",
+                },
+                // もっと柔軟に struct/class にしたければ 'ios-swift/any.swift' を使い、
+                // objectType/accessControl/import を指定できる（公式に記載あり）。:contentReference[oaicite:9]{index=9}
+            ],
+        },
     },
 };
