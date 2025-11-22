@@ -26,7 +26,7 @@
     ],
     "scripts": {
         "build": "style-dictionary build --config sd.config.mjs && npm run copy-json",
-        "copy-json": "cpy dist/json/*.json packages/json/"
+        "copy-json": "cpy dist/json/**/*.json packages/json"
     },
     "keywords": [
         "design tokens",
