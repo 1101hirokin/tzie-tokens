@@ -1,13 +1,103 @@
-// sd.config.mjs
 import StyleDictionary from "style-dictionary";
-import { register } from "@tokens-studio/sd-transforms";
+import {
+    register as registerTokensStudio,
+    expandTypesMap,
+} from "@tokens-studio/sd-transforms";
 
-register(StyleDictionary);
+registerTokensStudio(StyleDictionary);
+
+/**
+ * elevation.* の layer インデックスを
+ *  0 / 1 → 'core'
+ *  2     → 'cast'
+ * に置き換えた path を返す。
+ */
+const aliasElevationLayer = (path) => {
+    const p = path.map(String);
+    const idx = p.indexOf("elevation");
+    if (idx === -1) return p;
+    if (p.length <= idx + 2) return p;
+
+    const layer = p[idx + 2];
+    let alias = null;
+
+    if (layer === "0" || layer === "1") {
+        alias = "core";
+    } else if (layer === "2") {
+        alias = "cast";
+    }
+
+    if (!alias) return p;
+
+    const cloned = [...p];
+    cloned[idx + 2] = alias;
+    return cloned;
+};
+
+/**
+ * path から kebab-case 名を作る簡易実装
+ * 例: ["semantic", "surface", "primary"] → "semantic-surface-primary"
+ */
+const kebabFromPath = (path) => {
+    return path
+        .map((seg) =>
+            String(seg)
+                // 非英数字 → ハイフン
+                .replace(/[^a-zA-Z0-9]+/g, "-")
+                .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+                .toLowerCase()
+        )
+        .join("-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+};
+
+/**
+ * path から camelCase 名を作る簡易実装
+ * 例: ["semantic", "surface", "primary"] → "semanticSurfacePrimary"
+ */
+const camelFromPath = (path) => {
+    return path
+        .map((seg, index) => {
+            const base = String(seg)
+                .replace(/[^a-zA-Z0-9]+/g, " ")
+                .toLowerCase()
+                .split(" ")
+                .filter(Boolean)
+                .join("");
+            if (index === 0) return base;
+            return base.charAt(0).toUpperCase() + base.slice(1);
+        })
+        .join("");
+};
+
+/**
+ * CSS 用: kebab-case で core / cast を含めた名前を生成
+ */
+StyleDictionary.registerTransform({
+    name: "name/kebab-elevation-layer",
+    type: "name",
+    transform: (token) => {
+        const aliasedPath = aliasElevationLayer(token.path);
+        return kebabFromPath(aliasedPath);
+    },
+});
+
+/**
+ * JS / Compose / iOS 用: camelCase で core / cast を含めた名前を生成
+ */
+StyleDictionary.registerTransform({
+    name: "name/camel-elevation-layer",
+    type: "name",
+    transform: (token) => {
+        const aliasedPath = aliasElevationLayer(token.path);
+        return camelFromPath(aliasedPath);
+    },
+});
 
 export default {
-    // DTCGトークン
     source: ["src/**/*.json"],
-    // sd-transforms 0.16.0+ は preprocessor が必須
+
     preprocessors: ["tokens-studio"],
 
     platforms: {
@@ -16,6 +106,10 @@ export default {
             prefix: "tz",
             transformGroup: "tokens-studio",
             buildPath: "dist/json/",
+            expand: {
+                typesMap: expandTypesMap,
+                include: ["typography", "shadow"],
+            },
             files: [
                 {
                     destination: "tokens.nested.json",
@@ -34,34 +128,43 @@ export default {
         js: {
             prefix: "tz",
             transformGroup: "tokens-studio",
-            // JS識別子を安全にするため name 変換を追加（camel/pascalなど任意）
-            transforms: ["name/camel"],
+            transforms: ["name/camel-elevation-layer"],
             buildPath: "dist/js/",
+            expand: {
+                typesMap: expandTypesMap,
+                include: ["typography", "shadow"],
+            },
             files: [
-                { destination: "tokens.js", format: "javascript/es6" }, // ESM定数
+                {
+                    destination: "tokens.js",
+                    format: "javascript/es6",
+                },
                 {
                     destination: "tokens.d.ts",
                     format: "typescript/es6-declarations",
-                    // 文字列リテラル型を出したいなら true（必要に応じて）
-                    options: { outputStringLiterals: true },
+                    options: {
+                        outputStringLiterals: true,
+                    },
                 },
             ],
-            options: { outputReferences: true }, // 参照維持
+            options: {
+                outputReferences: true,
+            },
         },
 
         // 3) CSS Variables 出力
         css: {
             prefix: "tz",
             transformGroup: "tokens-studio",
-            transforms: ["name/kebab"], // --semantic-primary-bg など
+            transforms: ["name/kebab-elevation-layer"],
             buildPath: "dist/css/",
             files: [
                 {
                     destination: "tokens.css",
                     format: "css/variables",
                     options: {
-                        selector: ":root", // ルートセレクタ
-                        outputReferences: true, // var(--x) 参照を維持
+                        selector: ":root",
+                        outputReferences: true,
                     },
                 },
             ],
@@ -70,16 +173,22 @@ export default {
         // 5) Compose（Kotlinコード）出力
         compose: {
             prefix: "tz",
-            // Compose向けTransform Group（color/composeColor 等）:contentReference[oaicite:4]{index=4}
             transformGroup: "compose",
+            // ここでも camelCase の elevation layer 名を使う
+            transforms: ["name/camel-elevation-layer"],
             buildPath: "dist/compose/",
+            expand: {
+                typesMap: expandTypesMap,
+                include: ["typography", "shadow"],
+            },
             files: [
                 {
                     destination: "Tokens.kt",
-                    format: "compose/object", // Kotlin object に val を並べるビルトイン:contentReference[oaicite:5]{index=5}
+                    format: "compose/object",
                     options: {
-                        packageName: "com.tzie.tokens", // 任意（ドキュメント化されているオプション）:contentReference[oaicite:6]{index=6}
+                        packageName: "com.tzie.tokens",
                         className: "DesignTokens",
+                        outputReferences: true,
                     },
                 },
             ],
@@ -88,17 +197,21 @@ export default {
         // 6) iOS Swift 出力
         iosSwift: {
             prefix: "tz",
-            // Swift向けTransform Group（name=camel, color/UIColorSwift 等）:contentReference[oaicite:7]{index=7}
             transformGroup: "ios-swift",
+            transforms: ["name/camel-elevation-layer"],
             buildPath: "dist/ios/",
+            expand: {
+                typesMap: expandTypesMap,
+                include: ["typography", "shadow"],
+            },
             files: [
                 {
                     destination: "DesignTokens.swift",
-                    // Swiftの enum で値を並べるビルトインフォーマット :contentReference[oaicite:8]{index=8}
                     format: "ios-swift/enum.swift",
+                    options: {
+                        outputReferences: true,
+                    },
                 },
-                // もっと柔軟に struct/class にしたければ 'ios-swift/any.swift' を使い、
-                // objectType/accessControl/import を指定できる（公式に記載あり）。:contentReference[oaicite:9]{index=9}
             ],
         },
     },
