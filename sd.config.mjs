@@ -77,9 +77,13 @@ const camelFromPath = (path) => {
 StyleDictionary.registerTransform({
     name: "name/kebab-elevation-layer",
     type: "name",
-    transform: (token) => {
+    transform: (token, options) => {
         const aliasedPath = aliasElevationLayer(token.path);
-        return kebabFromPath(aliasedPath);
+        const baseName = kebabFromPath(aliasedPath);
+
+        const prefix = options && options.prefix;
+
+        return prefix ? `${prefix}-${baseName}` : baseName;
     },
 });
 
@@ -89,9 +93,16 @@ StyleDictionary.registerTransform({
 StyleDictionary.registerTransform({
     name: "name/camel-elevation-layer",
     type: "name",
-    transform: (token) => {
+    transform: (token, options) => {
         const aliasedPath = aliasElevationLayer(token.path);
-        return camelFromPath(aliasedPath);
+        const baseName = camelFromPath(aliasedPath);
+
+        const prefix = options && options.prefix;
+        if (!prefix) {
+            return baseName;
+        }
+
+        return `${prefix}${baseName.charAt(0).toUpperCase()}${baseName.slice(1)}`;
     },
 });
 
