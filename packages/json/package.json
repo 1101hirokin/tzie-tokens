@@ -1,0 +1,12 @@
+{
+    "name": "@tzie/tokens-json",
+    "version": "0.0.0-alpha.0",
+    "description": "Raw JSON design tokens for the Tzie design system",
+    "type": "module",
+    "main": "./dist/json/tokens.nested.json",
+    "files": [
+        "tokens.nested.json",
+        "tokens.flat.json",
+        "README.md"
+    ]
+}

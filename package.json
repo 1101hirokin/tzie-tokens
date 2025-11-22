@@ -1,19 +1,41 @@
 {
     "name": "@tzie/tokens",
     "version": "0.0.0-alpha.0",
-    "description": "",
-    "keywords": [
-        "tzie"
-    ],
+    "description": "Design tokens for the Tzie design system",
     "license": "ISC",
     "author": "Hiroki Nakatani",
     "type": "module",
-    "main": "index.js",
-    "scripts": {
-        "build": "style-dictionary build --config sd.config.mjs"
+    "main": "./dist/js/tokens.js",
+    "types": "./dist/js/tokens.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/js/tokens.d.ts",
+            "import": "./dist/js/tokens.js",
+            "default": "./dist/js/tokens.js"
+        },
+        "./css": "./dist/css/tokens.css",
+        "./json": "./dist/json/tokens.nested.json",
+        "./json/flat": "./dist/json/tokens.flat.json"
     },
+    "files": [
+        "dist/js",
+        "dist/css",
+        "dist/json",
+        "README.md",
+        "LICENSE"
+    ],
+    "scripts": {
+        "build": "style-dictionary build --config sd.config.mjs && npm run copy-json",
+        "copy-json": "cpy dist/json/*.json packages/json/"
+    },
+    "keywords": [
+        "design tokens",
+        "style-dictionary",
+        "tzie"
+    ],
     "devDependencies": {
         "@tokens-studio/sd-transforms": "^2.0.2",
+        "cpy-cli": "^6.0.0",
         "style-dictionary": "^5.1.1"
     }
 }
