@@ -13,6 +13,7 @@ export default {
     platforms: {
         // 1) JS + d.ts 出力
         js: {
+            prefix: "tz",
             transformGroup: "tokens-studio",
             // JS識別子を安全にするため name 変換を追加（camel/pascalなど任意）
             transforms: ["name/camel"],
@@ -31,6 +32,7 @@ export default {
 
         // 2) CSS Variables 出力
         css: {
+            prefix: "tz",
             transformGroup: "tokens-studio",
             transforms: ["name/kebab"], // --semantic-primary-bg など
             buildPath: "dist/css/",
