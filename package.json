@@ -2,7 +2,7 @@
     "name": "@tzie/tokens",
     "version": "0.0.0-alpha.0",
     "description": "Design tokens for the Tzie design system",
-    "license": "ISC",
+    "license": "MIT",
     "author": "Hiroki Nakatani",
     "type": "module",
     "main": "./dist/js/tokens.js",
@@ -13,14 +13,11 @@
             "import": "./dist/js/tokens.js",
             "default": "./dist/js/tokens.js"
         },
-        "./css": "./dist/css/tokens.css",
-        "./json": "./dist/json/tokens.nested.json",
-        "./json/flat": "./dist/json/tokens.flat.json"
+        "./css": "./dist/css/tokens.css"
     },
     "files": [
         "dist/js",
         "dist/css",
-        "dist/json",
         "README.md",
         "LICENSE"
     ],
@@ -30,6 +27,7 @@
     },
     "keywords": [
         "design tokens",
+        "design-systems",
         "style-dictionary",
         "tzie"
     ],

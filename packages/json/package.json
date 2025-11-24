@@ -1,6 +1,8 @@
 {
     "name": "@tzie/tokens-json",
     "version": "0.0.0-alpha.0",
+    "license": "MIT",
+    "author": "Hiroki Nakatani",
     "description": "Raw JSON design tokens for the Tzie design system",
     "type": "module",
     "main": "tokens.nested.json",
@@ -8,5 +10,11 @@
         "tokens.nested.json",
         "tokens.flat.json",
         "README.md"
+    ],
+    "keywords": [
+        "design tokens",
+        "design-systems",
+        "style-dictionary",
+        "tzie"
     ]
 }
