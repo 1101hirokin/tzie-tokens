@@ -1,6 +1,6 @@
 {
     "name": "@tzie/tokens-json",
-    "version": "0.0.0-alpha.0",
+    "version": "0.0.0-alpha.1",
     "license": "MIT",
     "author": "Hiroki Nakatani",
     "description": "Raw JSON design tokens for the Tzie design system",
