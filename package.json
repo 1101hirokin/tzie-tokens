@@ -1,6 +1,6 @@
 {
     "name": "@tzie/tokens",
-    "version": "0.0.0-alpha.1",
+    "version": "0.0.0-alpha.2",
     "description": "Design tokens for the Tzie design system",
     "license": "MIT",
     "author": "Hiroki Nakatani",
@@ -13,7 +13,7 @@
             "import": "./dist/js/tokens.js",
             "default": "./dist/js/tokens.js"
         },
-        "./css": "./dist/css/tokens.css"
+        "./tokens.css": "./dist/css/tokens.css"
     },
     "files": [
         "dist/js",
