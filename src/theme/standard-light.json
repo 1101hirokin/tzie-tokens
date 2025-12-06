@@ -1,1 +1,23 @@
-{}
+{
+    "color": {
+        "system": {
+            "value": "#007AFF",
+            "type": "color"
+        },
+        "semantic": {
+            "primary": {
+                "bg": { "value": "#521ed6", "type": "color" },
+                "fg": { "value": "#ffffff", "type": "color" },
+                "border": { "value": "#521ed6", "type": "color" },
+                "icon": {
+                    "value": "{color.semantic.primary.fg.value}",
+                    "type": "color"
+                },
+                "focus-ring": {
+                    "value": "{color.system.focus.value}",
+                    "type": "color"
+                }
+            }
+        }
+    }
+}
