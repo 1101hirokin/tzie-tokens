@@ -1,21 +1,73 @@
 {
     "color": {
-        "system": {
-            "value": "#007AFF",
-            "type": "color"
+        "scheme": {
+            "$value": "light",
+            "$type": "string"
+        },
+        "app": {
+            "system": {
+                "$value": "#007AFF",
+                "$type": "color"
+            },
+            "background": {
+                "$value": "#FFFFFF",
+                "$type": "color"
+            },
+            "foreground": {
+                "$value": "{color.gray.900}",
+                "$type": "color"
+            }
+        },
+        "brand": {
+            "50": { "$value": "#ebe9fb", "$type": "color" },
+            "100": { "$value": "#c1b9f2", "$type": "color" },
+            "200": { "$value": "#a398ec", "$type": "color" },
+            "300": { "$value": "#7868e4", "$type": "color" },
+            "400": { "$value": "#5e4bde", "$type": "color" },
+            "500": { "$value": "#361ed6", "$type": "color" },
+            "600": { "$value": "#311bc3", "$type": "color" },
+            "700": { "$value": "#261598", "$type": "color" },
+            "800": { "$value": "#1e1176", "$type": "color" },
+            "900": { "$value": "#170d5a", "$type": "color" }
         },
         "semantic": {
             "primary": {
-                "bg": { "value": "#521ed6", "type": "color" },
-                "fg": { "value": "#ffffff", "type": "color" },
-                "border": { "value": "#521ed6", "type": "color" },
+                "bg": { "$value": "{color.brand.600}", "$type": "color" },
+                "fg": { "$value": "#ffffff", "$type": "color" },
+                "border": {
+                    "$value": "{color.semantic.primary.bg}",
+                    "$type": "color"
+                },
                 "icon": {
-                    "value": "{color.semantic.primary.fg.value}",
-                    "type": "color"
+                    "$value": "{color.semantic.primary.fg}",
+                    "$type": "color"
                 },
                 "focus-ring": {
-                    "value": "{color.system.focus.value}",
-                    "type": "color"
+                    "$value": "{color.app.system}",
+                    "$type": "color"
+                },
+                "bg--hover": {
+                    "$value": "{color.brand.700}",
+                    "$type": "color"
+                },
+                "bg--pressed": {
+                    "$value": "{color.brand.800}",
+                    "$type": "color"
+                },
+
+                "soft-bg": { "$value": "{color.brand.50}", "$type": "color" },
+                "soft-fg:": { "$value": "{color.brand.800}", "$type": "color" },
+                "soft-border": {
+                    "$value": "{color.brand.300}",
+                    "$type": "color"
+                },
+                "soft-bg--hover": {
+                    "$value": "{color.brand.100}",
+                    "$type": "color"
+                },
+                "soft-bg--pressed": {
+                    "$value": "{color.brand.200}",
+                    "$type": "color"
                 }
             }
         }

@@ -3,6 +3,8 @@ import {
     register as registerTokensStudio,
     expandTypesMap,
 } from "@tokens-studio/sd-transforms";
+import { globSync } from "glob";
+import path from "path";
 
 registerTokensStudio(StyleDictionary);
 
@@ -106,6 +108,40 @@ StyleDictionary.registerTransform({
     },
 });
 
+/**
+ * テーマファイルを検出してCSS出力設定を動的に生成
+ */
+const themeFiles = globSync("src/theme/*.json");
+
+// CSS出力ファイル設定を構築
+const cssFiles = [
+    // 統合版（全トークンをマージ）
+    {
+        destination: "tokens.css",
+        format: "css/variables",
+        options: {
+            selector: ":root",
+            outputReferences: true,
+        },
+    },
+];
+
+// 各テーマごとの個別CSS出力を追加
+themeFiles.forEach((themePath) => {
+    const themeName = path.basename(themePath, ".json");
+
+    cssFiles.push({
+        destination: `themes/${themeName}.css`,
+        format: "css/variables",
+        // 全トークンを含める（参照解決のため）
+        // CSSカスケードで上書きされる
+        options: {
+            selector: `:root[data-theme="${themeName}"]`,
+            outputReferences: true,
+        },
+    });
+});
+
 export default {
     source: ["src/**/*.json"],
 
@@ -163,22 +199,13 @@ export default {
             },
         },
 
-        // 3) CSS Variables 出力
+        // 3) CSS Variables 出力（テーマ別出力を含む）
         css: {
             prefix: "tz",
             transformGroup: "tokens-studio",
             transforms: ["name/kebab-elevation-layer"],
             buildPath: "dist/css/",
-            files: [
-                {
-                    destination: "tokens.css",
-                    format: "css/variables",
-                    options: {
-                        selector: ":root",
-                        outputReferences: true,
-                    },
-                },
-            ],
+            files: cssFiles, // 動的に生成されたファイル設定
         },
 
         // 5) Compose（Kotlinコード）出力
