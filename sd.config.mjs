@@ -1,314 +1,313 @@
 import StyleDictionary from "style-dictionary";
-import {
-    register as registerTokensStudio,
-    expandTypesMap,
-} from "@tokens-studio/sd-transforms";
+import { register as registerTokensStudio, expandTypesMap } from "@tokens-studio/sd-transforms";
 
 registerTokensStudio(StyleDictionary);
 
-/**
- * elevation.* の layer インデックスを
- *  0 / 1 → 'core'
- *  2     → 'cast'
- * に置き換えた path を返す。
- */
+// elevation layer (0/1 → core, 2 → cast) の変換
 const aliasElevationLayer = (path) => {
     const p = path.map(String);
     const idx = p.indexOf("elevation");
-    if (idx === -1) return p;
-    if (p.length <= idx + 2) return p;
-
+    if (idx === -1 || p.length <= idx + 2) return p;
     const layer = p[idx + 2];
-    let alias = null;
-
-    if (layer === "0" || layer === "1") {
-        alias = "core";
-    } else if (layer === "2") {
-        alias = "cast";
-    }
-
+    const alias = (layer === "0" || layer === "1") ? "core" : layer === "2" ? "cast" : null;
     if (!alias) return p;
-
     const cloned = [...p];
     cloned[idx + 2] = alias;
     return cloned;
 };
 
-/**
- * path から kebab-case 名を作る簡易実装
- * 例: ["semantic", "surface", "primary"] → "semantic-surface-primary"
- */
-const kebabFromPath = (path) => {
-    return path
-        .map((seg) =>
-            String(seg)
-                // 非英数字 → ハイフン
-                .replace(/[^a-zA-Z0-9]+/g, "-")
-                .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-                .toLowerCase()
-        )
-        .join("-")
-        .replace(/-+/g, "-")
-        .replace(/^-|-$/g, "");
+// path を正規化して case 変換する共通関数
+const normalizePath = (path, toCase) => {
+    const normalized = path.map((seg) =>
+        String(seg).replace(/[^a-zA-Z0-9]+/g, " ").toLowerCase().split(" ").filter(Boolean)
+    ).flat();
+
+    if (toCase === "kebab") {
+        return normalized.join("-");
+    }
+    // camelCase
+    return normalized.map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join("");
 };
 
-/**
- * path から camelCase 名を作る簡易実装
- * 例: ["semantic", "surface", "primary"] → "semanticSurfacePrimary"
- */
-const camelFromPath = (path) => {
-    return path
-        .map((seg, index) => {
-            const base = String(seg)
-                .replace(/[^a-zA-Z0-9]+/g, " ")
-                .toLowerCase()
-                .split(" ")
-                .filter(Boolean)
-                .join("");
-            if (index === 0) return base;
-            return base.charAt(0).toUpperCase() + base.slice(1);
-        })
-        .join("");
-};
-
-/**
- * CSS 用: kebab-case で core / cast を含めた名前を生成
- */
-StyleDictionary.registerTransform({
-    name: "name/kebab-elevation-layer",
-    type: "name",
-    transform: (token, options) => {
-        const aliasedPath = aliasElevationLayer(token.path);
-        const baseName = kebabFromPath(aliasedPath);
-
-        const prefix = options && options.prefix;
-
-        return prefix ? `${prefix}-${baseName}` : baseName;
-    },
+// Name transforms
+["kebab", "camel"].forEach((caseType) => {
+    StyleDictionary.registerTransform({
+        name: `name/${caseType}-elevation-layer`,
+        type: "name",
+        transform: (token, options) => {
+            const name = normalizePath(aliasElevationLayer(token.path), caseType);
+            const prefix = options?.prefix;
+            if (!prefix) return name;
+            return caseType === "kebab" ? `${prefix}-${name}` : `${prefix}${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+        },
+    });
 });
 
-/**
- * JS / Compose / iOS 用: camelCase で core / cast を含めた名前を生成
- */
-StyleDictionary.registerTransform({
-    name: "name/camel-elevation-layer",
-    type: "name",
-    transform: (token, options) => {
-        const aliasedPath = aliasElevationLayer(token.path);
-        const baseName = camelFromPath(aliasedPath);
+// Dimension transforms (dimension タイプの px 値のみ対象)
+["swift/cgfloat", "compose/dp"].forEach((name) => {
+    StyleDictionary.registerTransform({
+        name: `size/${name}`,
+        type: "value",
+        matcher: (token) => {
+            const type = token.$type || token.type;
+            const value = token.$value || token.value;
 
-        const prefix = options && options.prefix;
-        if (!prefix) {
-            return baseName;
+            // Only process dimension type
+            if (type !== "dimension") {
+                return false;
+            }
+
+            // For strings, ONLY match if it's a valid px string
+            if (typeof value === "string") {
+                const trimmed = value.trim();
+                if (!trimmed.endsWith("px")) return false;
+                const num = parseFloat(trimmed);
+                return !isNaN(num) && isFinite(num);
+            }
+
+            // For numbers, make sure they're valid
+            if (typeof value === "number") {
+                return !isNaN(value) && isFinite(value);
+            }
+
+            return false;
+        },
+        transform: (token) => {
+            const type = token.$type || token.type;
+            const value = token.$value || token.value;
+
+            // Safety check: only transform dimension types
+            if (type !== "dimension") {
+                return value;
+            }
+
+            const num = typeof value === "string" ? parseFloat(value) : value;
+            return name === "swift/cgfloat" ? `CGFloat(${num})` : `${num}.dp`;
+        },
+    });
+});
+
+// base/theme グループ化
+const groupTokensBySource = (allTokens) => {
+    const baseTokens = [];
+    const themeTokensByName = {};
+
+    allTokens.forEach((token) => {
+        const filePath = token.filePath || "";
+        if (filePath.includes("base.tokens.json")) {
+            baseTokens.push(token);
+        } else if (filePath.includes("src/theme/")) {
+            const themeName = filePath.match(/src\/theme\/(.+)\.json$/)?.[1];
+            if (themeName) {
+                (themeTokensByName[themeName] ??= []).push(token);
+            }
         }
+    });
 
-        return `${prefix}${baseName.charAt(0).toUpperCase()}${baseName.slice(1)}`;
-    },
-});
+    return { baseTokens, themeTokensByName };
+};
 
-/**
- * CSS統合フォーマット: base と各テーマを1つのCSSファイルに出力
- * - :root { baseトークン }
- * - :root[data-theme="xxx"] { テーマ固有トークン }
- */
+// CSS format
 StyleDictionary.registerFormat({
     name: "css/unified-themes",
     format: ({ dictionary, options }) => {
-        const { outputReferences } = options;
-
-        // トークンをグループ化
-        const baseTokens = [];
-        const themeTokensByName = {};
-
-        dictionary.allTokens.forEach((token) => {
-            const filePath = token.filePath || "";
-
-            if (filePath.includes("base.tokens.json")) {
-                // baseトークン
-                baseTokens.push(token);
-            } else if (filePath.includes("src/theme/")) {
-                // テーマトークン
-                const match = filePath.match(/src\/theme\/(.+)\.json$/);
-                if (match) {
-                    const themeName = match[1];
-                    if (!themeTokensByName[themeName]) {
-                        themeTokensByName[themeName] = [];
-                    }
-                    themeTokensByName[themeName].push(token);
-                }
-            }
-        });
-
-        // CSS変数を生成するヘルパー（参照をサポート）
+        const { baseTokens, themeTokensByName } = groupTokensBySource(dictionary.allTokens);
         const formatVar = (token) => {
-            const varName = `--${token.name}`;
-            let value = token["$value"];
-
-            // outputReferencesがtrueで、元の値が参照（{...}）を含む場合
-            if (outputReferences && token.original && typeof token.original["$value"] === "string") {
-                const originalValue = token.original["$value"];
-                if (originalValue.includes("{") && originalValue.includes("}")) {
-                    // 参照パターン {path.to.token} を var(--token-name) に変換
-                    value = originalValue.replace(/\{([^}]+)\}/g, (_match, refPath) => {
-                        // 参照パスをCSS変数名に変換
-                        const refPathArray = refPath.split(".");
-                        const aliasedPath = aliasElevationLayer(refPathArray);
-                        const refName = kebabFromPath(aliasedPath);
-                        return `var(--tz-${refName})`;
-                    });
-                }
+            let value = token.$value;
+            const origValue = token.original?.$value;
+            if (options.outputReferences && typeof origValue === "string" && origValue.includes("{")) {
+                value = origValue.replace(/\{([^}]+)\}/g, (_, refPath) => {
+                    const refName = normalizePath(aliasElevationLayer(refPath.split(".")), "kebab");
+                    return `var(--tz-${refName})`;
+                });
             }
-
-            return `  ${varName}: ${value};`;
+            return `  --${token.name}: ${value};`;
         };
 
-        // CSS出力を構築
         let output = "/**\n * Design Tokens\n * Generated by Style Dictionary\n */\n\n";
-
-        // :root セレクタ（baseトークン）
-        if (baseTokens.length > 0) {
-            output += ":root {\n";
-            baseTokens.forEach((token) => {
-                output += formatVar(token) + "\n";
-            });
-            output += "}\n";
+        if (baseTokens.length) {
+            output += ":root {\n" + baseTokens.map(formatVar).join("\n") + "\n}\n";
         }
-
-        // 各テーマのセレクタ
-        const themeNames = Object.keys(themeTokensByName).sort();
-        themeNames.forEach((themeName) => {
-            const tokens = themeTokensByName[themeName];
-            if (tokens.length > 0) {
-                output += `\n:root[data-theme="${themeName}"] {\n`;
-                tokens.forEach((token) => {
-                    output += formatVar(token) + "\n";
-                });
-                output += "}\n";
+        Object.keys(themeTokensByName).sort().forEach((name) => {
+            const tokens = themeTokensByName[name];
+            if (tokens.length) {
+                output += `\n:root[data-theme="${name}"] {\n` + tokens.map(formatVar).join("\n") + "\n}\n";
             }
         });
-
         return output;
     },
 });
 
+// JSON format
+StyleDictionary.registerFormat({
+    name: "json/themed",
+    format: ({ dictionary }) => {
+        const { baseTokens, themeTokensByName } = groupTokensBySource(dictionary.allTokens);
+        const buildTree = (tokens) => tokens.reduce((tree, token) => {
+            const path = [...token.path];
+            const lastKey = path.pop();
+            path.reduce((obj, key) => obj[key] ??= {}, tree)[lastKey] = token.$value;
+            return tree;
+        }, {});
+
+        return JSON.stringify({
+            base: buildTree(baseTokens),
+            themes: Object.fromEntries(
+                Object.keys(themeTokensByName).sort().map((name) => [name, buildTree(themeTokensByName[name])])
+            ),
+        }, null, 2);
+    },
+});
+
+// JavaScript format
+StyleDictionary.registerFormat({
+    name: "javascript/themed",
+    format: ({ dictionary }) => {
+        const { baseTokens, themeTokensByName } = groupTokensBySource(dictionary.allTokens);
+        const formatValue = (token) => {
+            const value = token.$value;
+            const type = token.$type || token.type;
+            // fontFamily value is already a quoted string, wrap once more for JS
+            if (type === "fontFamily") return `"${value.replace(/"/g, '\\"')}"`;
+            return typeof value === "string" ? `"${value}"` : value;
+        };
+
+        let output = "export const base = {\n";
+        output += baseTokens.map((t) => `  ${t.name}: ${formatValue(t)},`).join("\n");
+        output += "\n};\n\nexport const themes = {\n";
+        output += Object.keys(themeTokensByName).sort().map((name) => {
+            const tokens = themeTokensByName[name].map((t) => `    ${t.name}: ${formatValue(t)},`).join("\n");
+            return `  "${name}": {\n${tokens}\n  },`;
+        }).join("\n");
+        output += "\n};\n";
+        return output;
+    },
+});
+
+// iOS Swift format
+StyleDictionary.registerFormat({
+    name: "ios-swift/themed",
+    format: ({ dictionary }) => {
+        const { baseTokens, themeTokensByName } = groupTokensBySource(dictionary.allTokens);
+        const formatValue = (token) => {
+            const value = token.$value;
+            const type = token.$type || token.type;
+
+            // Handle different token types appropriately
+            if (type === "fontFamily" && typeof value === "string") {
+                return `"${value.replace(/"/g, '\\"')}"`;
+            }
+            if (type === "fontWeight" && (typeof value === "string" || typeof value === "number")) {
+                return String(value);
+            }
+            return value;
+        };
+
+        let output = "import UIKit\n\npublic enum DesignTokens {\n";
+        output += "  public enum Base {\n";
+        output += baseTokens.map((t) => `    public static let ${t.name} = ${formatValue(t)}`).join("\n") + "\n";
+        output += "  }\n\n  public enum Themes {\n";
+        output += Object.keys(themeTokensByName).sort().map((name) => {
+            const tokens = themeTokensByName[name].map((t) => `      public static let ${t.name} = ${formatValue(t)}`).join("\n");
+            return `    public enum ${name.replace(/-/g, "_")} {\n${tokens}\n    }`;
+        }).join("\n");
+        output += "\n  }\n}\n";
+        return output;
+    },
+});
+
+// Compose format
+StyleDictionary.registerFormat({
+    name: "compose/themed",
+    format: ({ dictionary, options }) => {
+        const { baseTokens, themeTokensByName } = groupTokensBySource(dictionary.allTokens);
+        const formatValue = (token) => {
+            let value = token.$value || token.value;
+            const type = token.$type || token.type;
+
+            // Handle fontFamily: wrap in quotes for Kotlin
+            if (type === "fontFamily" && typeof value === "string") {
+                return `"${value.replace(/"/g, '\\"')}"`;
+            }
+
+            // Handle fontWeight: return as-is (number)
+            if (type === "fontWeight") {
+                return String(value);
+            }
+
+            // fontSize/lineHeight は .sp に変換
+            if (typeof value === "string" && value.endsWith(".dp")) {
+                const name = (token.name || "").toLowerCase();
+                if (name.includes("fontsize") || name.includes("lineheight")) {
+                    value = value.replace(/\.dp$/, ".sp");
+                }
+            }
+            return value;
+        };
+
+        let output = `package ${options.packageName || "com.example.tokens"}\n\n`;
+        output += "import androidx.compose.ui.graphics.Color\nimport androidx.compose.ui.unit.dp\nimport androidx.compose.ui.unit.sp\n\n";
+        output += "object DesignTokens {\n  object Base {\n";
+        output += baseTokens.map((t) => `    val ${t.name} = ${formatValue(t)}`).join("\n") + "\n";
+        output += "  }\n\n  object Themes {\n";
+        output += Object.keys(themeTokensByName).sort().map((name) => {
+            const objName = name.split("-").map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join("");
+            const tokens = themeTokensByName[name].map((t) => `      val ${t.name} = ${formatValue(t)}`).join("\n");
+            return `    object ${objName} {\n${tokens}\n    }`;
+        }).join("\n");
+        output += "\n  }\n}\n";
+        return output;
+    },
+});
 
 export default {
     source: ["src/**/*.json"],
-
     preprocessors: ["tokens-studio"],
-
     platforms: {
-        // 1) JSON出力
         json: {
             prefix: "tz",
             transformGroup: "tokens-studio",
             buildPath: "dist/json/",
-            expand: {
-                typesMap: expandTypesMap,
-                include: ["typography", "shadow"],
-            },
-            files: [
-                {
-                    destination: "tokens.nested.json",
-                    format: "json/nested",
-                    options: { outputReferences: true },
-                },
-                {
-                    destination: "tokens.flat.json",
-                    format: "json/flat",
-                    options: { outputReferences: true },
-                },
-            ],
+            files: [{ destination: "tokens.json", format: "json/themed" }],
         },
-
-        // 2) JS + d.ts 出力
         js: {
             prefix: "tz",
             transformGroup: "tokens-studio",
             transforms: ["name/camel-elevation-layer"],
             buildPath: "dist/js/",
-            expand: {
-                typesMap: expandTypesMap,
-                include: ["typography", "shadow"],
-            },
-            files: [
-                {
-                    destination: "tokens.js",
-                    format: "javascript/es6",
-                },
-                {
-                    destination: "tokens.d.ts",
-                    format: "typescript/es6-declarations",
-                    options: {
-                        outputStringLiterals: true,
-                    },
-                },
-            ],
-            options: {
-                outputReferences: true,
-            },
+            expand: { typesMap: expandTypesMap, include: ["typography", "shadow"] },
+            files: [{ destination: "tokens.js", format: "javascript/themed" }],
         },
-
-        // 3) CSS Variables 出力（統合版：baseと全テーマを1ファイルに）
         css: {
             prefix: "tz",
             transformGroup: "tokens-studio",
             transforms: ["name/kebab-elevation-layer"],
             buildPath: "dist/css/",
-            files: [
-                {
-                    destination: "tokens.css",
-                    format: "css/unified-themes",
-                    options: {
-                        outputReferences: true,
-                    },
-                },
-            ],
+            files: [{
+                destination: "tokens.css",
+                format: "css/unified-themes",
+                options: { outputReferences: true },
+            }],
         },
-
-        // 5) Compose（Kotlinコード）出力
         compose: {
             prefix: "tz",
-            transformGroup: "compose",
-            // ここでも camelCase の elevation layer 名を使う
-            transforms: ["name/camel-elevation-layer"],
+            transformGroup: "tokens-studio",
+            transforms: ["name/camel-elevation-layer", "color/composeColor", "size/compose/dp"],
             buildPath: "dist/compose/",
-            expand: {
-                typesMap: expandTypesMap,
-                include: ["typography", "shadow"],
-            },
-            files: [
-                {
-                    destination: "Tokens.kt",
-                    format: "compose/object",
-                    options: {
-                        packageName: "com.tzie.tokens",
-                        className: "DesignTokens",
-                        outputReferences: true,
-                    },
-                },
-            ],
+            expand: { typesMap: expandTypesMap, include: ["typography", "shadow"] },
+            files: [{
+                destination: "Tokens.kt",
+                format: "compose/themed",
+                options: { packageName: "com.tzie.tokens" },
+            }],
         },
-
-        // 6) iOS Swift 出力
         iosSwift: {
             prefix: "tz",
-            transformGroup: "ios-swift",
-            transforms: ["name/camel-elevation-layer"],
+            transformGroup: "tokens-studio",
+            transforms: ["name/camel-elevation-layer", "color/UIColorSwift", "content/swift/literal", "asset/swift/literal", "size/swift/cgfloat"],
             buildPath: "dist/ios/",
-            expand: {
-                typesMap: expandTypesMap,
-                include: ["typography", "shadow"],
-            },
-            files: [
-                {
-                    destination: "DesignTokens.swift",
-                    format: "ios-swift/enum.swift",
-                    options: {
-                        outputReferences: true,
-                    },
-                },
-            ],
+            expand: { typesMap: expandTypesMap, include: ["typography", "shadow"] },
+            files: [{ destination: "DesignTokens.swift", format: "ios-swift/themed" }],
         },
     },
 };
