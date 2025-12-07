@@ -46,11 +46,11 @@
                     "$value": "{color.app.system}",
                     "$type": "color"
                 },
-                "bg--hover": {
+                "bg-hover": {
                     "$value": "{color.brand.700}",
                     "$type": "color"
                 },
-                "bg--pressed": {
+                "bg-pressed": {
                     "$value": "{color.brand.800}",
                     "$type": "color"
                 },
@@ -61,11 +61,11 @@
                     "$value": "{color.brand.300}",
                     "$type": "color"
                 },
-                "soft-bg--hover": {
+                "soft-bg-hover": {
                     "$value": "{color.brand.100}",
                     "$type": "color"
                 },
-                "soft-bg--pressed": {
+                "soft-bg-pressed": {
                     "$value": "{color.brand.200}",
                     "$type": "color"
                 }
@@ -85,11 +85,11 @@
                     "$value": "{color.app.system}",
                     "$type": "color"
                 },
-                "bg--hover": {
+                "bg-hover": {
                     "$value": "{color.red.700}",
                     "$type": "color"
                 },
-                "bg--pressed": {
+                "bg-pressed": {
                     "$value": "{color.red.800}",
                     "$type": "color"
                 },
@@ -103,11 +103,11 @@
                     "$value": "{color.red.300}",
                     "$type": "color"
                 },
-                "soft-bg--hover": {
+                "soft-bg-hover": {
                     "$value": "{color.red.100}",
                     "$type": "color"
                 },
-                "soft-bg--pressed": {
+                "soft-bg-pressed": {
                     "$value": "{color.red.200}",
                     "$type": "color"
                 }
@@ -127,11 +127,11 @@
                     "$value": "{color.app.system}",
                     "$type": "color"
                 },
-                "bg--hover": {
+                "bg-hover": {
                     "$value": "{color.yellow.700}",
                     "$type": "color"
                 },
-                "bg--pressed": {
+                "bg-pressed": {
                     "$value": "{color.yellow.800}",
                     "$type": "color"
                 },
@@ -148,11 +148,11 @@
                     "$value": "{color.yellow.300}",
                     "$type": "color"
                 },
-                "soft-bg--hover": {
+                "soft-bg-hover": {
                     "$value": "{color.yellow.100}",
                     "$type": "color"
                 },
-                "soft-bg--pressed": {
+                "soft-bg-pressed": {
                     "$value": "{color.yellow.200}",
                     "$type": "color"
                 }
@@ -172,11 +172,11 @@
                     "$value": "{color.app.system}",
                     "$type": "color"
                 },
-                "bg--hover": {
+                "bg-hover": {
                     "$value": "{color.green.700}",
                     "$type": "color"
                 },
-                "bg--pressed": {
+                "bg-pressed": {
                     "$value": "{color.green.800}",
                     "$type": "color"
                 },
@@ -193,11 +193,11 @@
                     "$value": "{color.green.300}",
                     "$type": "color"
                 },
-                "soft-bg--hover": {
+                "soft-bg-hover": {
                     "$value": "{color.green.100}",
                     "$type": "color"
                 },
-                "soft-bg--pressed": {
+                "soft-bg-pressed": {
                     "$value": "{color.green.200}",
                     "$type": "color"
                 }
@@ -217,11 +217,11 @@
                     "$value": "{color.app.system}",
                     "$type": "color"
                 },
-                "bg--hover": {
+                "bg-hover": {
                     "$value": "{color.gray.700}",
                     "$type": "color"
                 },
-                "bg--pressed": {
+                "bg-pressed": {
                     "$value": "{color.gray.800}",
                     "$type": "color"
                 },
@@ -238,11 +238,11 @@
                     "$value": "{color.gray.300}",
                     "$type": "color"
                 },
-                "soft-bg--hover": {
+                "soft-bg-hover": {
                     "$value": "{color.gray.100}",
                     "$type": "color"
                 },
-                "soft-bg--pressed": {
+                "soft-bg-pressed": {
                     "$value": "{color.gray.200}",
                     "$type": "color"
                 }
