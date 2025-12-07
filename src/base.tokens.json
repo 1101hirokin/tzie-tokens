@@ -1065,5 +1065,9 @@
                 "lineHeight": "{line-heights.4}"
             }
         }
+    },
+    "focus-ring": {
+        "width": { "$type": "dimension", "$value": "2px" },
+        "gap": { "$type": "dimension", "$value": "0px" }
     }
 }

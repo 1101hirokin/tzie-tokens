@@ -195,6 +195,76 @@ DTCG 形式の tokens.json を **Style Dictionary v5 + @tokens-studio/sd-transfo
 
 ---
 
+## CLI（カスタムテーマのビルド）
+
+このパッケージは、ユーザーが独自のテーマファイルをビルドできる CLI ツールを提供します。
+
+### 前提条件
+
+- Node.js 18+
+
+### 基本的な使い方
+
+```bash
+# CSS のみビルド
+npx @tzie/tokens build --theme ./my-theme.json --platform css
+
+# すべてのプラットフォームをビルド
+npx @tzie/tokens build --theme ./my-theme.json --platform all
+
+# カスタム出力先を指定
+npx @tzie/tokens build --theme ./my-theme.json --platform css --output ./public/styles
+```
+
+### オプション
+
+- `--theme <path>` **(必須)** - テーマ JSON ファイルのパス
+- `--platform <name>` - ビルド対象プラットフォーム: `css`, `js`, `compose`, `ios`, `all` (デフォルト: `all`)
+- `--output <dir>` - 出力ディレクトリ (デフォルト: `./dist`)
+- `--base <path>` - カスタムベーストークンファイル（オプション、デフォルトはパッケージに含まれる `base.tokens.json`）
+
+### テーマファイルの作成
+
+テーマファイルは、ベーストークンを参照してセマンティックカラーなどを定義する JSON ファイルです。
+
+例（`my-theme.json`）:
+
+```json
+{
+  "color": {
+    "semantic": {
+      "primary": {
+        "bg": { "$value": "#3b82f6", "$type": "color" },
+        "fg": { "$value": "#ffffff", "$type": "color" }
+      }
+    }
+  }
+}
+```
+
+ベーストークンの参照も可能です:
+
+```json
+{
+  "color": {
+    "semantic": {
+      "primary": {
+        "bg": { "$value": "{color.blue.600}", "$type": "color" }
+      }
+    }
+  }
+}
+```
+
+### ヘルプの表示
+
+```bash
+npx @tzie/tokens --help
+npx @tzie/tokens build --help
+```
+
+---
+
 ## 開発者向け（このリポジトリの運用）
 
 ### 前提
