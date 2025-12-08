@@ -1,9 +1,9 @@
 {
+    "scheme": {
+        "$value": "light",
+        "$type": "string"
+    },
     "color": {
-        "scheme": {
-            "$value": "light",
-            "$type": "string"
-        },
         "app": {
             "system": {
                 "$value": "#007AFF",

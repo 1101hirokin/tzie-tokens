@@ -1069,5 +1069,21 @@
     "focus-ring": {
         "width": { "$type": "dimension", "$value": "2px" },
         "gap": { "$type": "dimension", "$value": "0px" }
+    },
+    "motion": {
+        "easing": {
+            "standard": {
+                "$value": [0.2, 0.0, 0.0, 1.0],
+                "$type": "cubicBezier"
+            },
+            "decelerate": {
+                "$value": [0.0, 0.0, 0.0, 1.0],
+                "$type": "cubicBezier"
+            },
+            "accelerate": {
+                "$value": [0.3, 0.0, 1.0, 1.0],
+                "$type": "cubicBezier"
+            }
+        }
     }
 }
