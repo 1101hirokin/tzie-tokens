@@ -1,6 +1,6 @@
 {
     "name": "@tzie/tokens",
-    "version": "0.0.0-alpha.8",
+    "version": "0.0.0-alpha.9",
     "description": "Design tokens for the Tzie design system",
     "license": "MIT",
     "author": "Hiroki Nakatani",

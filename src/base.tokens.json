@@ -1071,17 +1071,33 @@
         "gap": { "$type": "dimension", "$value": "0px" }
     },
     "motion": {
-        "easing": {
-            "standard": {
-                "$value": [0.2, 0.0, 0.0, 1.0],
-                "$type": "cubicBezier"
+        "standard": {
+            "duration": {
+                "$value": 200,
+                "$type": "duration"
             },
-            "decelerate": {
-                "$value": [0.0, 0.0, 0.0, 1.0],
+            "easing": {
+                "$value": [0.2, 0.0, 0.38, 0.9],
                 "$type": "cubicBezier"
+            }
+        },
+        "entrance": {
+            "duration": {
+                "$value": 250,
+                "$type": "duration"
             },
-            "accelerate": {
-                "$value": [0.3, 0.0, 1.0, 1.0],
+            "easing": {
+                "$value": [0.0, 0.0, 0.38, 0.9],
+                "$type": "cubicBezier"
+            }
+        },
+        "exit": {
+            "duration": {
+                "$value": 200,
+                "$type": "duration"
+            },
+            "easing": {
+                "$value": [0.2, 0.0, 1.0, 1.0],
                 "$type": "cubicBezier"
             }
         }

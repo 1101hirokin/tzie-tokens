@@ -25,7 +25,10 @@ export default {
       transforms: ["name/camel-elevation-layer"],
       buildPath: "dist/js/",
       expand: { typesMap: expandTypesMap, include: ["typography", "shadow"] },
-      files: [{ destination: "tokens.js", format: "javascript/themed" }],
+      files: [
+        { destination: "tokens.js", format: "javascript/themed" },
+        { destination: "tokens.d.ts", format: "typescript/themed" },
+      ],
     },
     css: {
       prefix: "tz",
