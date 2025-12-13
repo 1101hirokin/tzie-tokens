@@ -54,7 +54,6 @@
                     "$value": "{color.brand.800}",
                     "$type": "color"
                 },
-
                 "soft-bg": { "$value": "{color.brand.50}", "$type": "color" },
                 "soft-fg:": { "$value": "{color.brand.800}", "$type": "color" },
                 "soft-border": {
@@ -244,6 +243,22 @@
                 },
                 "soft-bg-pressed": {
                     "$value": "{color.gray.200}",
+                    "$type": "color"
+                }
+            },
+            "disabled": {
+                "bg": { "$value": "{color.gray.300}", "$type": "color" },
+                "fg": { "$value": "{color.gray.500}", "$type": "color" },
+                "border": {
+                    "$value": "{color.gray.300}",
+                    "$type": "color"
+                },
+                "icon": {
+                    "$value": "{color.gray.500}",
+                    "$type": "color"
+                },
+                "focus-ring": {
+                    "$value": "{color.gray.300}",
                     "$type": "color"
                 }
             }
