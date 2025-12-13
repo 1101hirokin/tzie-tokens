@@ -247,14 +247,14 @@
                 }
             },
             "disabled": {
-                "bg": { "$value": "{color.gray.400}", "$type": "color" },
-                "fg": { "$value": "{color.gray.500}", "$type": "color" },
+                "bg": { "$value": "{color.gray.200}", "$type": "color" },
+                "fg": { "$value": "{color.gray.400}", "$type": "color" },
                 "border": {
-                    "$value": "{color.gray.300}",
+                    "$value": "{color.semantic.disabled.bg}",
                     "$type": "color"
                 },
                 "icon": {
-                    "$value": "{color.gray.500}",
+                    "$value": "{color.semantic.disabled.fg}",
                     "$type": "color"
                 },
                 "soft-bg": {
