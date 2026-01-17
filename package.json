@@ -1,51 +1,21 @@
 {
-    "name": "@tzie/tokens",
-    "version": "0.0.0-alpha.14",
-    "description": "Design tokens for the Tzie design system",
-    "license": "MIT",
-    "author": "Hiroki Nakatani",
+    "name": "tzie-tokens-workspace",
+    "private": true,
     "type": "module",
-    "main": "./dist/js/tokens.js",
-    "types": "./dist/js/tokens.d.ts",
-    "bin": {
-        "tzie-tokens": "./bin/tzie-tokens.js"
-    },
-    "exports": {
-        ".": {
-            "types": "./dist/js/tokens.d.ts",
-            "import": "./dist/js/tokens.js",
-            "default": "./dist/js/tokens.js"
-        },
-        "./tokens.css": "./dist/css/tokens.css"
-    },
-    "files": [
-        "bin",
-        "lib",
-        "src/base.tokens.json",
-        "dist/js",
-        "dist/css",
-        "README.md",
-        "LICENSE"
+    "workspaces": [
+        "packages/*"
     ],
     "scripts": {
-        "build": "style-dictionary build --config sd.config.mjs && npm run copy-json",
+        "build": "style-dictionary build --config sd.config.mjs && npm run build:themes && npm run copy-packages && npm run copy-json",
+        "build:themes": "tsc -p tsconfig.themes.json && cpy src/theme/*.json dist/js/theme && cpy src/theme/*.json dist/json/themes",
+        "copy-packages": "cpy dist/js/**/* packages/js/dist/js && cpy dist/css/**/* packages/js/dist/css && cpy dist/compose/**/* packages/compose/dist/compose && cpy dist/ios/**/* packages/ios/dist/ios",
         "copy-json": "cpy dist/json/**/*.json packages/json"
     },
-    "keywords": [
-        "design tokens",
-        "design-systems",
-        "style-dictionary",
-        "tzie"
-    ],
-    "engines": {
-        "node": ">=18.0.0"
-    },
-    "dependencies": {
+    "devDependencies": {
         "@tokens-studio/sd-transforms": "^2.0.2",
         "cac": "^6.7.14",
-        "style-dictionary": "^5.1.1"
-    },
-    "devDependencies": {
-        "cpy-cli": "^6.0.0"
+        "style-dictionary": "^5.1.1",
+        "cpy-cli": "^6.0.0",
+        "typescript": "^5.4.5"
     }
 }

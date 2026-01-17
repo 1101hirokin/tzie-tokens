@@ -6,7 +6,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Get default base tokens path
 export const getDefaultBasePath = () => {
-  return join(__dirname, "..", "src", "base.tokens.json");
+  return join(__dirname, "..", "..", "..", "src", "base.tokens.json");
 };
 
 // Create Style Dictionary config for a specific platform
