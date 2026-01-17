@@ -7,9 +7,9 @@
     ],
     "scripts": {
         "build": "style-dictionary build --config sd.config.mjs && npm run build:themes && npm run copy-packages && npm run copy-json",
-        "build:themes": "tsc -p tsconfig.themes.json && cpy src/theme/*.json dist/js/theme && cpy src/theme/*.json dist/json/themes",
-        "copy-packages": "cpy dist/js/**/* packages/js/dist/js && cpy dist/css/**/* packages/js/dist/css && cpy dist/compose/**/* packages/compose/dist/compose && cpy dist/ios/**/* packages/ios/dist/ios",
-        "copy-json": "cpy dist/json/**/*.json packages/json"
+        "build:themes": "tsc -p tsconfig.themes.json && mkdir -p dist/js/theme dist/json/themes && cp src/theme/*.json dist/js/theme && cp src/theme/*.json dist/json/themes && cp types/index.d.ts dist/js/index.d.ts",
+        "copy-packages": "mkdir -p packages/js/dist/js packages/js/dist/css packages/compose/dist/compose packages/ios/dist/ios && cp -R dist/js/. packages/js/dist/js && cp -R dist/css/. packages/js/dist/css && cp -R dist/compose/. packages/compose/dist/compose && cp -R dist/ios/. packages/ios/dist/ios",
+        "copy-json": "mkdir -p packages/json/dist && cp -R dist/json/. packages/json/dist"
     },
     "devDependencies": {
         "@tokens-studio/sd-transforms": "^2.0.2",

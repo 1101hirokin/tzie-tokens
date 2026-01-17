@@ -85,18 +85,13 @@ DTCG 形式の tokens.json を **Style Dictionary v5 + @tokens-studio/sd-transfo
 
 ビルド結果の JSON には次のようにアクセスできます。
 
-ネスト形式:
+メインのトークン:
 
-    import nested from '@tzie/tokens/json' assert { type: 'json' };
+    import tokens from '@tzie/tokens-json' assert { type: 'json' };
 
-フラット形式:
+テーマ別トークン:
 
-    import flat from '@tzie/tokens/json/flat' assert { type: 'json' };
-
-    const primaryBg = flat['semantic.surface.primary.bg'];
-
-- `tokens.nested.json` … DTCG の構造に近いネスト形式
-- `tokens.flat.json` … `semantic.surface.primary.bg` のようなフラットキー形式
+    import standardLight from '@tzie/tokens-json/dist/themes/standard-light.json' assert { type: 'json' };
 
 ---
 

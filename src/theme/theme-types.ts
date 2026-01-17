@@ -1,55 +1,56 @@
-export type DTCGToken<TType extends string, TValue> = {
+export type TzieDtcgToken<TType extends string, TValue> = {
     $value: TValue;
     $type: TType;
     $description?: string;
 };
 
-export type SchemeToken = DTCGToken<"string", "light" | "dark">;
+export type TzieSchemeToken = TzieDtcgToken<"string", "light" | "dark">;
 
-export type ColorToken = DTCGToken<"color", string>;
+export type TzieColorToken = TzieDtcgToken<"color", string>;
 
-export type AppColorTokens = {
-    system: ColorToken;
-    background: ColorToken;
-    foreground: ColorToken;
-};
+export type TzieAppColorTokens = Partial<{
+    system: TzieColorToken;
+    background: TzieColorToken;
+    foreground: TzieColorToken;
+}>;
 
-export type SemanticColorTokens = {
-    bg: ColorToken;
-    fg: ColorToken;
-    border: ColorToken;
-    icon: ColorToken;
-    "focus-ring": ColorToken;
-    "bg-hover": ColorToken;
-    "bg-pressed": ColorToken;
-    "soft-bg": ColorToken;
-    "soft-fg": ColorToken;
-    "soft-border": ColorToken;
-    "soft-bg-hover": ColorToken;
-    "soft-bg-pressed": ColorToken;
-};
+export type TzieSemanticColorTokens = Partial<{
+    bg: TzieColorToken;
+    fg: TzieColorToken;
+    border: TzieColorToken;
+    icon: TzieColorToken;
+    "focus-ring": TzieColorToken;
+    "bg-hover": TzieColorToken;
+    "bg-pressed": TzieColorToken;
+    "soft-bg": TzieColorToken;
+    "soft-fg": TzieColorToken;
+    "soft-border": TzieColorToken;
+    "soft-bg-hover": TzieColorToken;
+    "soft-bg-pressed": TzieColorToken;
+}>;
 
-export type TzieColorScaleTokens = {
-    "50": ColorToken;
-    "100": ColorToken;
-    "200": ColorToken;
-    "300": ColorToken;
-    "400": ColorToken;
-    "500": ColorToken;
-    "600": ColorToken;
-    "700": ColorToken;
-    "800": ColorToken;
-    "900": ColorToken;
-};
+export type TzieColorScaleTokens = Partial<{
+    "50": TzieColorToken;
+    "100": TzieColorToken;
+    "200": TzieColorToken;
+    "300": TzieColorToken;
+    "400": TzieColorToken;
+    "500": TzieColorToken;
+    "600": TzieColorToken;
+    "700": TzieColorToken;
+    "800": TzieColorToken;
+    "900": TzieColorToken;
+}>;
 
 export type TzieTheme = {
-    scheme: SchemeToken;
-    color: {
-        app: AppColorTokens;
-        semantic: Record<string, SemanticColorTokens>;
+    scheme?: TzieSchemeToken;
+    color?: {
+        app?: TzieAppColorTokens;
+        semantic?: Record<string, TzieSemanticColorTokens>;
         [colorName: string]:
-            | AppColorTokens
-            | Record<string, SemanticColorTokens>
-            | TzieColorScaleTokens;
+            | TzieAppColorTokens
+            | Record<string, TzieSemanticColorTokens>
+            | TzieColorScaleTokens
+            | undefined;
     };
 };
