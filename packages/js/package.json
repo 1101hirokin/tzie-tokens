@@ -1,0 +1,46 @@
+{
+    "name": "@tzie/tokens",
+    "version": "0.0.0-alpha.20",
+    "description": "Design tokens for the Tzie design system",
+    "license": "MIT",
+    "author": "Hiroki Nakatani",
+    "type": "module",
+    "main": "./dist/js/tokens.js",
+    "types": "./dist/js/index.d.ts",
+    "bin": {
+        "tzie-tokens": "bin/tzie-tokens.js"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/js/index.d.ts",
+            "import": "./dist/js/tokens.js",
+            "default": "./dist/js/tokens.js"
+        },
+        "./themes": {
+            "types": "./dist/js/themes.d.ts",
+            "import": "./dist/js/themes.js",
+            "default": "./dist/js/themes.js"
+        },
+        "./tokens.css": "./dist/css/tokens.css"
+    },
+    "files": [
+        "bin",
+        "lib",
+        "dist/js",
+        "dist/css"
+    ],
+    "keywords": [
+        "design tokens",
+        "design-systems",
+        "style-dictionary",
+        "tzie"
+    ],
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "dependencies": {
+        "@tokens-studio/sd-transforms": "^2.0.2",
+        "cac": "^6.7.14",
+        "style-dictionary": "^5.1.1"
+    }
+}

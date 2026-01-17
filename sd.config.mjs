@@ -1,7 +1,7 @@
 import StyleDictionary from "style-dictionary";
 import { register as registerTokensStudio, expandTypesMap } from "@tokens-studio/sd-transforms";
-import { registerTransforms } from "./lib/transforms.js";
-import { registerFormats } from "./lib/formats.js";
+import { registerTransforms } from "./packages/js/lib/transforms.js";
+import { registerFormats } from "./packages/js/lib/formats.js";
 
 // Initialize Style Dictionary with tokens-studio and custom extensions
 registerTokensStudio(StyleDictionary);

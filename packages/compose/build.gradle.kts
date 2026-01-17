@@ -17,8 +17,7 @@ repositories {
 // Style Dictionary が吐いた Kotlin ファイルをソースに含める
 sourceSets {
     named("main") {
-        // tokens リポのルートから見た相対パスを調整する
-        kotlin.srcDir("../dist/compose")
+        kotlin.srcDir("dist/compose")
     }
     named("test") {
         // テストが必要になったらここに追加

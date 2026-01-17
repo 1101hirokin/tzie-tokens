@@ -54,9 +54,8 @@
                     "$value": "{color.brand.800}",
                     "$type": "color"
                 },
-
                 "soft-bg": { "$value": "{color.brand.50}", "$type": "color" },
-                "soft-fg:": { "$value": "{color.brand.800}", "$type": "color" },
+                "soft-fg": { "$value": "{color.brand.800}", "$type": "color" },
                 "soft-border": {
                     "$value": "{color.brand.300}",
                     "$type": "color"
@@ -95,7 +94,7 @@
                 },
 
                 "soft-bg": { "$value": "{color.red.50}", "$type": "color" },
-                "soft-fg:": {
+                "soft-fg": {
                     "$value": "{color.red.800}",
                     "$type": "color"
                 },
@@ -140,7 +139,7 @@
                     "$value": "{color.yellow.50}",
                     "$type": "color"
                 },
-                "soft-fg:": {
+                "soft-fg": {
                     "$value": "{color.yellow.800}",
                     "$type": "color"
                 },
@@ -185,7 +184,7 @@
                     "$value": "{color.green.50}",
                     "$type": "color"
                 },
-                "soft-fg:": {
+                "soft-fg": {
                     "$value": "{color.green.800}",
                     "$type": "color"
                 },
@@ -230,7 +229,7 @@
                     "$value": "{color.gray.50}",
                     "$type": "color"
                 },
-                "soft-fg:": {
+                "soft-fg": {
                     "$value": "{color.gray.800}",
                     "$type": "color"
                 },
@@ -243,6 +242,30 @@
                     "$type": "color"
                 },
                 "soft-bg-pressed": {
+                    "$value": "{color.gray.200}",
+                    "$type": "color"
+                }
+            },
+            "disabled": {
+                "bg": { "$value": "{color.gray.200}", "$type": "color" },
+                "fg": { "$value": "{color.gray.400}", "$type": "color" },
+                "border": {
+                    "$value": "{color.semantic.disabled.bg}",
+                    "$type": "color"
+                },
+                "icon": {
+                    "$value": "{color.semantic.disabled.fg}",
+                    "$type": "color"
+                },
+                "soft-bg": {
+                    "$value": "{color.gray.100}",
+                    "$type": "color"
+                },
+                "soft-fg": {
+                    "$value": "{color.gray.300}",
+                    "$type": "color"
+                },
+                "soft-border": {
                     "$value": "{color.gray.200}",
                     "$type": "color"
                 }

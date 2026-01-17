@@ -4,7 +4,7 @@ Tzie デザインシステムの **デザイントークン**群です。
 DTCG 形式の tokens.json を **Style Dictionary v5 + @tokens-studio/sd-transforms** で各プラットフォーム向けにビルドしています。
 
 - ソース: `src/**/*.json`（DTCG / Tokens Studio 互換）
-- ビルド先: `dist/` 以下に各 PF 向け成果物を出力
+- ビルド先: `dist/` 以下に各 PF 向け成果物を出力（`packages/*` にコピーして配布）
 
 このリポジトリは「トークン専用」です。  
 各 UI 実装（React / Lit / SwiftUI / Compose など）は、このパッケージを依存として参照します。
@@ -28,6 +28,14 @@ DTCG 形式の tokens.json を **Style Dictionary v5 + @tokens-studio/sd-transfo
         DesignTokens.swift # Swift 用 enum
       compose/
         Tokens.kt          # Jetpack Compose / Kotlin 用 object
+
+配布用の配置（例）:
+
+    packages/
+      js/      # @tzie/tokens
+      json/    # @tzie/tokens-json
+      ios/     # SwiftPM 用
+      compose/ # Kotlin/Compose 用
 
 ---
 
@@ -77,18 +85,13 @@ DTCG 形式の tokens.json を **Style Dictionary v5 + @tokens-studio/sd-transfo
 
 ビルド結果の JSON には次のようにアクセスできます。
 
-ネスト形式:
+メインのトークン:
 
-    import nested from '@tzie/tokens/json' assert { type: 'json' };
+    import tokens from '@tzie/tokens-json' assert { type: 'json' };
 
-フラット形式:
+テーマ別トークン:
 
-    import flat from '@tzie/tokens/json/flat' assert { type: 'json' };
-
-    const primaryBg = flat['semantic.surface.primary.bg'];
-
-- `tokens.nested.json` … DTCG の構造に近いネスト形式
-- `tokens.flat.json` … `semantic.surface.primary.bg` のようなフラットキー形式
+    import standardLight from '@tzie/tokens-json/dist/themes/standard-light.json' assert { type: 'json' };
 
 ---
 
@@ -100,7 +103,7 @@ DTCG 形式の tokens.json を **Style Dictionary v5 + @tokens-studio/sd-transfo
 2. タグ（例: `0.0.0-alpha.0`）またはブランチを選択
 3. `TzieTokens` を依存として追加
 
-`Package.swift` 例（このリポジトリ側・参考）:
+`packages/ios/Package.swift` 例（このリポジトリ側・参考）:
 
     // swift-tools-version: 5.9
     import PackageDescription
@@ -139,11 +142,11 @@ DTCG 形式の tokens.json を **Style Dictionary v5 + @tokens-studio/sd-transfo
 
 ## Android / Jetpack Compose（Kotlin）
 
-`dist/compose/Tokens.kt` をソースとして、Kotlin ライブラリとして配布する想定です。
+`packages/compose/dist/compose/Tokens.kt` をソースとして、Kotlin ライブラリとして配布する想定です。
 
 ### ライブラリ側（このリポジトリ or サブプロジェクト例）
 
-`kotlin/build.gradle.kts` 例:
+`packages/compose/build.gradle.kts` 例:
 
     plugins {
         kotlin("jvm") version "2.0.21"
@@ -163,8 +166,7 @@ DTCG 形式の tokens.json を **Style Dictionary v5 + @tokens-studio/sd-transfo
 
     sourceSets {
         named("main") {
-            // tokens リポのルートから見た相対パスを調整
-            kotlin.srcDir("../dist/compose")
+            kotlin.srcDir("dist/compose")
         }
     }
 
@@ -280,8 +282,10 @@ npx @tzie/tokens build --help
       theme/ # テーマごとに1ファイル
 
     sd.config.mjs        # Style Dictionary 設定
-    Package.swift        # SwiftPM 向け設定（任意）
-    kotlin/              # Kotlin / Compose ライブラリ用設定（任意）
+    packages/js/         # @tzie/tokens（JS/TS/CSS）
+    packages/json/       # @tzie/tokens-json（JSON）
+    packages/ios/        # SwiftPM 向け設定（任意）
+    packages/compose/    # Kotlin / Compose ライブラリ用設定（任意）
     dist/                # ビルド成果物（gitignore 対象）
 
 > `dist/` 以下は Style Dictionary により自動生成される成果物です。  
